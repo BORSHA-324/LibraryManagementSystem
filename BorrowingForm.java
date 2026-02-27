@@ -55,7 +55,8 @@ public class BorrowingForm extends JFrame {
     private static final Color TEAL_DARK = new Color(17, 128, 106);
     
     private List<Borrowing> borrowingList = new ArrayList<>();
-    private final String FILE_PATH = "data/borrowings.dat";
+    
+    private final String FILE_PATH = LibraryConfig.getInstance().getBorrowingsFilePath();
     
     private JTextField txtBorrowingId, txtBookId, txtMemberId;
     private JComboBox<Borrowing.BorrowingStatus> cmbStatus;
@@ -508,4 +509,5 @@ public class BorrowingForm extends JFrame {
             borrowingList = new ArrayList<>();
         }
     }
+
 }
