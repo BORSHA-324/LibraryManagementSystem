@@ -55,8 +55,9 @@ public class BookForm extends JFrame {
     private static final Color TEAL_DARK = new Color(17, 128, 106);       
 
     private List<Book> bookList = new ArrayList<>();
-    private final String FILE_PATH = "data/books.dat";
-
+    
+    private final String FILE_PATH = LibraryConfig.getInstance().getBooksFilePath();
+    
     private JTextField txtBookId, txtTitle, txtAuthor, txtIsbn, txtCopies;
     
     private JComboBox<Book.BookCategory> cmbCategory;
@@ -569,3 +570,4 @@ public class BookForm extends JFrame {
         }
     }
 }
+
