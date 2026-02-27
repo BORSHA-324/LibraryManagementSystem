@@ -72,7 +72,7 @@ public class MainMenu extends JFrame {
         buttonPanel.setLayout(new GridLayout(4, 1, 0, 20));
         buttonPanel.setBorder(BorderFactory.createEmptyBorder(20, 100, 80, 100));
         
-        // Create buttons with Corporate Teal theme (same color for all except Exit)
+        
         JButton btnBooks = createMenuButton("📚 Manage Books");
         JButton btnMembers = createMenuButton("👥 Manage Members");
         JButton btnBorrowing = createMenuButton("📖 Manage Borrowing");
@@ -98,7 +98,7 @@ public class MainMenu extends JFrame {
         footerLabel.setFont(new Font("Arial", Font.PLAIN, 12));
         footerPanel.add(footerLabel);
         
-        // Add to main panel
+        
         mainPanel.add(titlePanel, BorderLayout.NORTH);
         mainPanel.add(buttonPanel, BorderLayout.CENTER);
         mainPanel.add(footerPanel, BorderLayout.SOUTH);
@@ -175,9 +175,11 @@ public class MainMenu extends JFrame {
     // Main method - program starts here
     public static void main(String[] args) {
        
-        new java.io.File("data").mkdirs();
+        LibraryConfig config = LibraryConfig.getInstance();
+        LibraryConfig sameConfig = LibraryConfig.getInstance();
+        System.out.println("Singleton test result: " + (config == sameConfig));
         
-        // Use system look and feel
+        
         try {
             UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
         } catch (Exception e) {
@@ -190,4 +192,5 @@ public class MainMenu extends JFrame {
             menu.setVisible(true);
         });
     }
+
 }
