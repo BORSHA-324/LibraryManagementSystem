@@ -54,7 +54,8 @@ public class MemberForm extends JFrame {
     private static final Color TEAL_DARK = new Color(17, 128, 106);
 
     private List<Member> memberList = new ArrayList<>();
-    private final String FILE_PATH = "data/members.dat";
+    
+    private final String FILE_PATH = LibraryConfig.getInstance().getMembersFilePath();
 
     private JTextField txtMemberId, txtName, txtEmail, txtPhone, txtAddress;
     private JComboBox<Member.MembershipType> cmbMembershipType;
@@ -501,3 +502,4 @@ public class MemberForm extends JFrame {
         }
     }
 }
+
