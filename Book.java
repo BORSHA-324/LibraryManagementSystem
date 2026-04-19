@@ -1,34 +1,31 @@
-
 package models;
 
 import java.io.Serializable;
 import java.util.Date;
+import models.memento.BookMemento;
 
 public class Book implements Serializable {
-    
-    
+
     public enum BookCategory {
         FICTION("Fiction"),
         SCIENCE("Science"),
         HISTORY("History"),
         TECHNOLOGY("Technology"),
         BIOGRAPHY("Biography");
-        
+
         private final String displayName;
-        
-        BookCategory(String displayName) 
-        {
+
+        BookCategory(String displayName) {
             this.displayName = displayName;
         }
-        
+
         @Override
-        public String toString() 
-        {
+        public String toString() {
             return displayName;
         }
     }
-    
-    // Book attributes
+
+   
     private String bookId;
     private String title;
     private String author;
@@ -36,16 +33,14 @@ public class Book implements Serializable {
     private BookCategory category;
     private Date publishedDate;
     private int availableCopies;
-    
-    // Default constructor
-    public Book() 
-    {
-        
+
+  
+    public Book() {
     }
-    
-    // Parameterized constructor
-    public Book(String bookId, String title, String author, String isbn, BookCategory category, Date publishedDate, int availableCopies) 
-    {
+
+ 
+    public Book(String bookId, String title, String author, String isbn,
+                BookCategory category, Date publishedDate, int availableCopies) {
         this.bookId = bookId;
         this.title = title;
         this.author = author;
@@ -54,64 +49,86 @@ public class Book implements Serializable {
         this.publishedDate = publishedDate;
         this.availableCopies = availableCopies;
     }
+
     
-    // Getters
-    public String getBookId() 
-    { 
-        return bookId; 
+    public String getBookId() {
+        return bookId;
     }
-    public String getTitle() 
-    { 
-        return title; 
+
+    public String getTitle() {
+        return title;
     }
-    public String getAuthor() 
-    { 
-        return author; 
+
+    public String getAuthor() {
+        return author;
     }
-    public String getIsbn() 
-    { 
-        return isbn; 
+
+    public String getIsbn() {
+        return isbn;
     }
-    public BookCategory getCategory() 
-    { 
-        return category; 
+
+    public BookCategory getCategory() {
+        return category;
     }
-    public Date getPublishedDate() 
-    { 
-        return publishedDate; 
+
+    public Date getPublishedDate() {
+        return publishedDate;
     }
-    public int getAvailableCopies() 
-    { 
-        return availableCopies; 
+
+    public int getAvailableCopies() {
+        return availableCopies;
     }
+
+   
+    public void setBookId(String bookId) {
+        this.bookId = bookId;
+    }
+
+    public void setTitle(String title) {
+        this.title = title;
+    }
+
+    public void setAuthor(String author) {
+        this.author = author;
+    }
+
+    public void setIsbn(String isbn) {
+        this.isbn = isbn;
+    }
+
+    public void setCategory(BookCategory category) {
+        this.category = category;
+    }
+
+    public void setPublishedDate(Date publishedDate) {
+        this.publishedDate = publishedDate;
+    }
+
+    public void setAvailableCopies(int availableCopies) {
+        this.availableCopies = availableCopies;
+    }
+
+  
+    public BookMemento save() {
+        return new BookMemento(
+                bookId,
+                title,
+                author,
+                isbn,
+                category,
+                publishedDate,
+                availableCopies
+        );
+    }
+
     
-    // Setters
-    public void setBookId(String bookId) 
-    { 
-        this.bookId = bookId; 
-    }
-    public void setTitle(String title) 
-    { 
-        this.title = title; 
-    }
-    public void setAuthor(String author) 
-    { 
-        this.author = author; 
-    }
-    public void setIsbn(String isbn) 
-    { 
-        this.isbn = isbn; 
-    }
-    public void setCategory(BookCategory category) 
-    { 
-        this.category = category; 
-    }
-    public void setPublishedDate(Date publishedDate) 
-    { 
-        this.publishedDate = publishedDate; 
-    }
-    public void setAvailableCopies(int availableCopies) 
-    { 
-        this.availableCopies = availableCopies; 
+    public void restore(BookMemento memento) {
+        this.bookId = memento.getBookId();
+        this.title = memento.getTitle();
+        this.author = memento.getAuthor();
+        this.isbn = memento.getIsbn();
+        this.category = memento.getCategory();
+        this.publishedDate = memento.getPublishedDate();
+        this.availableCopies = memento.getAvailableCopies();
     }
 }
