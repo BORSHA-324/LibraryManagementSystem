@@ -1,33 +1,19 @@
-
 package models;
 
+import javax.swing.*;
+import java.awt.*;
+import java.awt.event.*;
 
-import java.awt.BorderLayout;
-import java.awt.Color;
-import java.awt.Cursor;
-import java.awt.Font;
-import java.awt.GradientPaint;
-import java.awt.Graphics;
-import java.awt.Graphics2D;
-import java.awt.GridLayout;
-import java.awt.RenderingHints;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
-
-import javax.swing.BorderFactory;
-import javax.swing.JButton;
-import javax.swing.JFrame;
-import javax.swing.JLabel;
-import javax.swing.JPanel;
-import javax.swing.SwingUtilities;
-import javax.swing.UIManager;
 
 public class MainMenu extends JFrame {
 
     private static final Color TEAL_PRIMARY = new Color(22, 160, 133);
     private static final Color TEAL_LIGHT = new Color(26, 188, 156);
 
+    private LibraryFacade facade; 
+
     public MainMenu() {
+        facade = new LibraryFacade(); 
         setTitle("Library Management System");
         setSize(600, 450);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -43,9 +29,7 @@ public class MainMenu extends JFrame {
                 Graphics2D g2d = (Graphics2D) g;
                 g2d.setRenderingHint(RenderingHints.KEY_RENDERING, RenderingHints.VALUE_RENDER_QUALITY);
                 int w = getWidth(), h = getHeight();
-                Color color1 = new Color(45, 52, 54);
-                Color color2 = new Color(20, 25, 30);
-                GradientPaint gp = new GradientPaint(0, 0, color1, 0, h, color2);
+                GradientPaint gp = new GradientPaint(0, 0, new Color(45, 52, 54), 0, h, new Color(20, 25, 30));
                 g2d.setPaint(gp);
                 g2d.fillRect(0, 0, w, h);
             }
@@ -55,15 +39,13 @@ public class MainMenu extends JFrame {
         JPanel titlePanel = new JPanel();
         titlePanel.setOpaque(false);
         titlePanel.setBorder(BorderFactory.createEmptyBorder(40, 20, 20, 20));
-
         JLabel titleLabel = new JLabel("Library Management System");
         titleLabel.setFont(new Font("Arial", Font.BOLD, 32));
         titleLabel.setForeground(Color.WHITE);
         titlePanel.add(titleLabel);
 
-        JPanel buttonPanel = new JPanel();
+        JPanel buttonPanel = new JPanel(new GridLayout(4, 1, 0, 20));
         buttonPanel.setOpaque(false);
-        buttonPanel.setLayout(new GridLayout(4, 1, 0, 20));
         buttonPanel.setBorder(BorderFactory.createEmptyBorder(20, 100, 80, 100));
 
         JButton btnBooks = createMenuButton("📚 Manage Books");
@@ -71,9 +53,9 @@ public class MainMenu extends JFrame {
         JButton btnBorrowing = createMenuButton("📖 Manage Borrowing");
         JButton btnExit = createExitButton("🚪 Exit");
 
-        btnBooks.addActionListener(e -> new BookForm().setVisible(true));
-        btnMembers.addActionListener(e -> new MemberForm().setVisible(true));
-        btnBorrowing.addActionListener(e -> new BorrowingForm().setVisible(true));
+        btnBooks.addActionListener(e -> new BookForm(facade).setVisible(true));
+        btnMembers.addActionListener(e -> new MemberForm(facade).setVisible(true));
+        btnBorrowing.addActionListener(e -> new BorrowingForm(facade).setVisible(true));
         btnExit.addActionListener(e -> System.exit(0));
 
         buttonPanel.add(btnBooks);
@@ -106,15 +88,10 @@ public class MainMenu extends JFrame {
         button.setOpaque(true);
 
         button.addMouseListener(new MouseAdapter() {
-            @Override
-            public void mouseEntered(MouseEvent evt) {
-                button.setBackground(TEAL_LIGHT);
-            }
-            @Override
-            public void mouseExited(MouseEvent evt) {
-                button.setBackground(TEAL_PRIMARY);
-            }
+            public void mouseEntered(MouseEvent evt) { button.setBackground(TEAL_LIGHT); }
+            public void mouseExited(MouseEvent evt) { button.setBackground(TEAL_PRIMARY); }
         });
+
         return button;
     }
 
@@ -129,29 +106,18 @@ public class MainMenu extends JFrame {
         button.setOpaque(true);
 
         button.addMouseListener(new MouseAdapter() {
-            @Override
-            public void mouseEntered(MouseEvent evt) {
-                button.setBackground(new Color(231, 76, 60).brighter());
-            }
-            @Override
-            public void mouseExited(MouseEvent evt) {
-                button.setBackground(new Color(231, 76, 60));
-            }
+            public void mouseEntered(MouseEvent evt) { button.setBackground(new Color(231, 76, 60).brighter()); }
+            public void mouseExited(MouseEvent evt) { button.setBackground(new Color(231, 76, 60)); }
         });
+
         return button;
     }
 
     public static void main(String[] args) {
-        LibraryConfig.getInstance();
+        new java.io.File("data").mkdirs();
+        try { UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName()); } 
+        catch (Exception e) { e.printStackTrace(); }
 
-        try {
-            UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-
-        SwingUtilities.invokeLater(() -> {
-            new MainMenu().setVisible(true);
-        });
+        SwingUtilities.invokeLater(() -> new MainMenu().setVisible(true));
     }
 }
