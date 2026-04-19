@@ -46,7 +46,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
-public class BookForm extends JFrame {
+public class BookForm extends JFrame implements DataObserver {
 
 
 private static final Color TEAL_PRIMARY = new Color(22, 160, 133);   
@@ -75,12 +75,28 @@ private int selectedRow = -1;
 public BookForm() 
 {
 loadFromFile();
+
+// Register this form as an Observer to receive real-time updates
+LibraryConfig.getInstance().addObserver(this);
+
+
+this.addWindowListener(new java.awt.event.WindowAdapter() 
+{
+        @Override
+        public void windowClosing(java.awt.event.WindowEvent e) 
+        {
+            // Tells LibraryConfig to stop sending "shouts" to this window
+            LibraryConfig.getInstance().removeObserver(BookForm.this);
+        }
+    });
+
 setTitle("Book Management");
 setSize(1200, 700);
 setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
 setLocationRelativeTo(null);
 initComponents();
 refreshTable();
+
 }
 
 private void initComponents() 
@@ -420,6 +436,8 @@ Integer.parseInt(txtCopies.getText().trim())
 
 bookList.add(book);
 saveToFile();
+// Notify all other open windows that the book data has changed
+LibraryConfig.getInstance().notifyObservers();
 refreshTable();
 clearForm();
 
@@ -446,6 +464,8 @@ book.setPublishedDate((Date) dateSpinner.getValue());
 book.setAvailableCopies(Integer.parseInt(txtCopies.getText().trim()));
 
 saveToFile();
+// Notify all other open windows that the book data has changed
+LibraryConfig.getInstance().notifyObservers();
 refreshTable();
 clearForm();
 
@@ -469,6 +489,8 @@ int confirm = JOptionPane.showConfirmDialog(this,
 if (confirm == JOptionPane.YES_OPTION) {
 bookList.remove(selectedRow);
 saveToFile();
+// Notify all other open windows that the book data has changed
+LibraryConfig.getInstance().notifyObservers();
 refreshTable();
 clearForm();
 
@@ -570,5 +592,11 @@ ois.close();
 } catch (Exception e) {
 bookList = new ArrayList<>();
 }
+}
+@Override
+public void onDataChanged() {
+    // Reload the updated list from the file and refresh the table UI
+    loadFromFile();
+    refreshTable();
 }
 }

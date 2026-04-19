@@ -46,7 +46,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
-public class MemberForm extends JFrame {
+public class MemberForm extends JFrame implements DataObserver{
 
 
 private static final Color TEAL_PRIMARY = new Color(22, 160, 133);
@@ -68,12 +68,27 @@ private int selectedRow = -1;
 public MemberForm() 
 {
 loadFromFile();
+
+// Register this form as an Observer to receive real-time updates
+LibraryConfig.getInstance().addObserver(this);
+
+this.addWindowListener(new java.awt.event.WindowAdapter() 
+{
+    @Override
+    public void windowClosing(java.awt.event.WindowEvent e) 
+    {
+        LibraryConfig.getInstance().removeObserver(MemberForm.this);
+    }
+});
+
 setTitle("Member Management");
 setSize(1200, 700);
 setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
 setLocationRelativeTo(null);
 initComponents();
 refreshTable();
+
+
 }
 
 private void initComponents() {
@@ -357,8 +372,10 @@ return btn;
 private void addMember() {
 if (!validateFields()) return;
 
-for (Member m : memberList) {
-if (m.getMemberId().equals(txtMemberId.getText().trim())) {
+for (Member m : memberList) 
+{
+if (m.getMemberId().equals(txtMemberId.getText().trim())) 
+{
 JOptionPane.showMessageDialog(this, "Member ID already exists!",
 "Error", JOptionPane.ERROR_MESSAGE);
 return;
@@ -367,6 +384,10 @@ return;
 
 memberList.add(getMemberFromForm());
 saveToFile();
+
+// Shout to all open windows that member data has been updated
+LibraryConfig.getInstance().notifyObservers();
+
 refreshTable();
 clearForm();
 
@@ -385,6 +406,10 @@ if (!validateFields()) return;
 
 memberList.set(selectedRow, getMemberFromForm());
 saveToFile();
+
+// Shout to all open windows that member data has been updated
+LibraryConfig.getInstance().notifyObservers();
+
 refreshTable();
 clearForm();
 
@@ -403,14 +428,19 @@ int confirm = JOptionPane.showConfirmDialog(this,
 "Are you sure you want to delete this member?",
 "Confirm Delete", JOptionPane.YES_NO_OPTION);
 
-if (confirm == JOptionPane.YES_OPTION) {
-memberList.remove(selectedRow);
-saveToFile();
-refreshTable();
-clearForm();
+if (confirm == JOptionPane.YES_OPTION) 
+{
+    memberList.remove(selectedRow);
+    saveToFile();
 
-JOptionPane.showMessageDialog(this, "Member deleted successfully!",
-"Success", JOptionPane.INFORMATION_MESSAGE);
+    // Shout to all open windows that member data has been updated
+    LibraryConfig.getInstance().notifyObservers();
+
+    refreshTable();
+    clearForm();
+
+    JOptionPane.showMessageDialog(this, "Member deleted successfully!",
+    "Success", JOptionPane.INFORMATION_MESSAGE);
 }
 }
 
@@ -487,19 +517,30 @@ JOptionPane.showMessageDialog(this, "Error saving data: " + e.getMessage(),
 }
 
 @SuppressWarnings("unchecked")
-private void loadFromFile() {
-File file = new File(FILE_PATH);
-if (!file.exists()) {
-memberList = new ArrayList<>();
-return;
+private void loadFromFile() 
+{
+    File file = new File(FILE_PATH);
+if (!file.exists()) 
+{
+    memberList = new ArrayList<>();
+    return;
 }
 
-try {
-ObjectInputStream ois = new ObjectInputStream(new FileInputStream(FILE_PATH));
-memberList = (List<Member>) ois.readObject();
-ois.close();
-} catch (Exception e) {
-memberList = new ArrayList<>();
+try 
+{
+    ObjectInputStream ois = new ObjectInputStream(new FileInputStream(FILE_PATH));
+    memberList = (List<Member>) ois.readObject();
+    ois.close();
+} 
+catch (Exception e) 
+{
+    memberList = new ArrayList<>();
 }
+}
+@Override
+public void onDataChanged() {
+    // Sync the local member list with the file and update the UI table
+    loadFromFile();
+    refreshTable();
 }
 }

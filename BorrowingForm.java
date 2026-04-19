@@ -47,9 +47,9 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
-public class BorrowingForm extends JFrame {
+public class BorrowingForm extends JFrame implements DataObserver{
 
-// Corporate Teal Theme Colors
+
 private static final Color TEAL_PRIMARY = new Color(22, 160, 133);
 private static final Color TEAL_TEXT = new Color(77, 215, 198);
 private static final Color TEAL_DARK = new Color(17, 128, 106);
@@ -66,14 +66,28 @@ private JTable borrowingTable;
 private DefaultTableModel tableModel;
 private int selectedRow = -1;
 
-public BorrowingForm() {
-loadFromFile();
-setTitle("Borrowing Management");
-setSize(1200, 700);
-setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
-setLocationRelativeTo(null);
-initComponents();
-refreshTable();
+public BorrowingForm() 
+{
+    loadFromFile();
+
+    // Register this form to receive updates and synchronize with other windows
+    LibraryConfig.getInstance().addObserver(this);
+    
+    this.addWindowListener(new java.awt.event.WindowAdapter() 
+    {
+    @Override
+    public void windowClosing(java.awt.event.WindowEvent e) 
+    {
+        LibraryConfig.getInstance().removeObserver(BorrowingForm.this);
+    }
+});
+
+    setTitle("Borrowing Management");
+    setSize(1200, 700);
+    setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+    setLocationRelativeTo(null);
+    initComponents();
+    refreshTable();
 }
 
 private void initComponents() {
@@ -375,6 +389,10 @@ txtMemberId.getText().trim(), (Date) borrowDateSpinner.getValue(),
 
 borrowingList.add(borrowing);
 saveToFile();
+
+// Notify all other forms to refresh their data
+LibraryConfig.getInstance().notifyObservers();
+
 refreshTable();
 clearForm();
 
@@ -400,6 +418,10 @@ borrowing.setReturnDate((Date) returnDateSpinner.getValue());
 borrowing.setStatus((Borrowing.BorrowingStatus) cmbStatus.getSelectedItem());
 
 saveToFile();
+
+// Notify all other forms to refresh their data
+LibraryConfig.getInstance().notifyObservers();
+
 refreshTable();
 clearForm();
 
@@ -421,6 +443,10 @@ int confirm = JOptionPane.showConfirmDialog(this,
 if (confirm == JOptionPane.YES_OPTION) {
 borrowingList.remove(selectedRow);
 saveToFile();
+
+// Notify all other forms to refresh their data
+LibraryConfig.getInstance().notifyObservers();
+
 refreshTable();
 clearForm();
 
@@ -509,6 +535,13 @@ ois.close();
 } catch (Exception e) {
 borrowingList = new ArrayList<>();
 }
+}
+@Override
+public void onDataChanged() 
+{
+    // Reload the latest data from the file and refresh the UI table
+    loadFromFile();
+    refreshTable();
 }
 }
 

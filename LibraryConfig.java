@@ -1,5 +1,8 @@
 package models;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public class LibraryConfig {
 
     private static LibraryConfig instance = null;
@@ -21,6 +24,26 @@ public class LibraryConfig {
             instance = new LibraryConfig();
         }
         return instance;
+    }
+    
+    private final List<DataObserver> observers = new ArrayList<>();
+
+    public void addObserver(DataObserver observer) 
+    {
+        if (!observers.contains(observer)) observers.add(observer);
+    }
+
+    public void removeObserver(DataObserver observer) 
+    {
+        observers.remove(observer);
+    }
+
+    public void notifyObservers() 
+    {
+        for (DataObserver observer : observers) 
+        {
+            observer.onDataChanged();
+        }
     }
 
     public String getBooksFilePath() 
