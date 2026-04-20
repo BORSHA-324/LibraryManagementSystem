@@ -1,14 +1,4 @@
 
-
-
-import javax.swing.BorderFactory;
-import javax.swing.JButton;
-import javax.swing.JFrame;
-import javax.swing.JLabel;
-import javax.swing.JPanel;
-import javax.swing.SwingUtilities;
-import javax.swing.UIManager;
-
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Cursor;
@@ -18,6 +8,13 @@ import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.GridLayout;
 import java.awt.RenderingHints;
+import javax.swing.BorderFactory;
+import javax.swing.JButton;
+import javax.swing.JFrame;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
+import javax.swing.SwingUtilities;
+import javax.swing.UIManager;
 
 public class MainMenu extends JFrame {
 
@@ -56,49 +53,42 @@ public class MainMenu extends JFrame {
         };
         mainPanel.setLayout(new BorderLayout());
 
-        
         JPanel titlePanel = new JPanel();
         titlePanel.setOpaque(false);
         titlePanel.setBorder(BorderFactory.createEmptyBorder(40, 20, 20, 20));
 
         JLabel titleLabel = new JLabel("Library Management System");
         titleLabel.setFont(TITLE_FONT);
-        titleLabel.setForeground(new Color(240, 240, 240)); 
+        titleLabel.setForeground(new Color(240, 240, 240));
         titlePanel.add(titleLabel);
 
-        
         JPanel buttonPanel = new JPanel();
         buttonPanel.setOpaque(false);
         buttonPanel.setLayout(new GridLayout(4, 1, 0, 25));
         buttonPanel.setBorder(BorderFactory.createEmptyBorder(20, 150, 60, 150));
 
-        
         JButton btnBooks = createMenuButton("Manage Books");
         JButton btnMembers = createMenuButton("Manage Members");
         JButton btnBorrowing = createMenuButton("Manage Borrowing");
         JButton btnExit = createExitButton("Exit");
 
-        
         btnBooks.addActionListener(e -> openBookForm());
         btnMembers.addActionListener(e -> openMemberForm());
         btnBorrowing.addActionListener(e -> openBorrowingForm());
         btnExit.addActionListener(e -> System.exit(0));
 
-        
         buttonPanel.add(btnBooks);
         buttonPanel.add(btnMembers);
         buttonPanel.add(btnBorrowing);
         buttonPanel.add(btnExit);
 
-        
         JPanel footerPanel = new JPanel();
         footerPanel.setOpaque(false);
         JLabel footerLabel = new JLabel("© 2025 Library Management System");
-        footerLabel.setForeground(new Color(200, 200, 200)); 
+        footerLabel.setForeground(new Color(200, 200, 200));
         footerLabel.setFont(FOOTER_FONT);
         footerPanel.add(footerLabel);
 
-        
         mainPanel.add(titlePanel, BorderLayout.NORTH);
         mainPanel.add(buttonPanel, BorderLayout.CENTER);
         mainPanel.add(footerPanel, BorderLayout.SOUTH);
@@ -154,37 +144,31 @@ public class MainMenu extends JFrame {
         return button;
     }
 
-    
     private void openBookForm() {
         JFrame bookForm = FormFactory.createForm(FormFactory.FormType.BOOK);
         bookForm.setVisible(true);
     }
 
-    
     private void openMemberForm() {
         JFrame memberForm = FormFactory.createForm(FormFactory.FormType.MEMBER);
         memberForm.setVisible(true);
     }
 
-    
     private void openBorrowingForm() {
         JFrame borrowingForm = FormFactory.createForm(FormFactory.FormType.BORROWING);
         borrowingForm.setVisible(true);
     }
 
-    
     public static void main(String[] args) {
 
         new java.io.File("data").mkdirs();
 
-        
         try {
             UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
         } catch (Exception e) {
             e.printStackTrace();
         }
 
-        
         SwingUtilities.invokeLater(() -> {
             MainMenu menu = new MainMenu();
             menu.setVisible(true);
